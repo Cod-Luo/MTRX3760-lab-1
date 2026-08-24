@@ -49,6 +49,20 @@ class CController
     double mLastError;      // the reading from the previous cycle
 };
 
+//---CBattery------------------------------------------------------------------
+// A CBattery represents the robot's power source.
+class CBattery
+{
+  public:
+    CBattery();
+    void Drain( int aAmount );  // reduces the battery's charge by aAmount
+    int GetCharge();          // returns how much charge is left in the battery
+
+  private:
+    int mCharge;            // how much charge is left in the battery
+    
+};
+
 //---CMotor--------------------------------------------------------------------
 // A CMotor is a single drive motor with a label and a current speed.
 class CMotor
@@ -88,6 +102,7 @@ class CRobot
     CController mController;
     CMotor mLeftMotor;
     CMotor mRightMotor;
+    CBattery mBattery;
 };
 
 //---main----------------------------------------------------------------------
@@ -159,14 +174,40 @@ CRobot::CRobot()
     mRightMotor( "Right" )
 {
 }
+
+//---CBattery Implementation-----------------------------------------------------
+CBattery::CBattery()
+  : mCharge( 100 )
+{
+}
+//---
+void CBattery::Drain( int aAmount )
+{
+  mCharge -= aAmount;
+  if( mCharge < 0 )
+    mCharge = 0;
+}
+
+//---
+int CBattery::GetCharge()
+{
+  return mCharge;
+}
+
 //---
 void CRobot::Update()
 {
-  int error = mSensor.Read();
-  double steering = mController.ComputeSteering( error );
+    mBattery.Drain( 10 );
+    int error = mSensor.Read();
+    double steering = mController.ComputeSteering( error );
+    double speed = BaseSpeed;
 
-  mLeftMotor.SetSpeed( BaseSpeed + steering );
-  mRightMotor.SetSpeed( BaseSpeed - steering );
+    if (mBattery.GetCharge() < 80){
+        speed = 0.25;
+    }
+    
+    mLeftMotor.SetSpeed( speed + steering );
+    mRightMotor.SetSpeed( speed - steering );
 }
 //---
 void CRobot::Report()
@@ -175,4 +216,6 @@ void CRobot::Report()
   std::cout << ", ";
   mRightMotor.Report();
   std::cout << std::endl;
+  mBattery.GetCharge();
+  std::cout << "Battery charge: " << mBattery.GetCharge() << std::endl;
 }

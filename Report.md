@@ -64,7 +64,6 @@ Yes, `main()` had to change in the public version because it directly accesses a
 ### Inherit
 
 ### Standalone
-
 #### Program Output
 ```text
 Bedroom 07:00
@@ -81,3 +80,30 @@ The standalone `CAlarmClock` had to repeat the normal clock's time data and beha
 
 **What is the name of the object-oriented principle that let the second version reuse the clock's behaviour?**
 Inheritance. It allows `CAlarmClock` to reuse the existing behaviour of `CClock` while adding its own alarm-specific features.
+
+## A4 - Power Budget
+
+### Power_budget1
+
+### Power_budget2
+#### Program Output
+```text
+DriveMotor: 60 W
+StatusLed: 0 W
+Heater: 60 W
+Total: 120 W
+```
+
+#### Questions
+
+**What did you have to change in each version to add the heater?**
+In `power_budget2.cpp`, a new `CHeater` class was added as a subclass of `CDevice`. It was given a heat setting, a `SetHeat()` function, and its own `PowerDraw()` implementation. A heater object was then created in `main()` and added to the `devices` array. 
+
+**Which version was easier to extend, and what specifically made it easier?**
+`power_budget2.cpp` was easier to extend because all devices are stored as `CDevice*` objects and processed using the same loop. Once `CHeater` implemented its own `PowerDraw()` function, it could simply be added to the device array without needing a separate block of reporting and total-calculation code.
+
+**What is the name of the object-oriented principle behind that difference?**
+Polymorphism. The motor, LED, and heater can all be treated as `CDevice` objects while each class provides its own implementation of `PowerDraw()`.
+
+
+

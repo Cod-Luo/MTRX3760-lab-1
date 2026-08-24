@@ -9,7 +9,6 @@
 
 #### Program Output
 ```text
-PS C:\Users\marzu\Documents\cpp-learning> .\robot.exe
 Left motor 0.8, Right motor 0.2
 Battery charge: 90
 Left motor 0.55, Right motor 0.45
@@ -41,7 +40,6 @@ Encapsulation. The robot's internal parts and their behaviour are kept inside `C
 
 #### Program Output
 ```text
-PS C:\Users\marzu\Documents\cpp-learning> .\oven.exe
 Reflow oven is at 25 C
 Curing oven is at 28 C
 ```
@@ -69,7 +67,6 @@ Yes, `main()` had to change in the public version because it directly accesses a
 
 #### Program Output
 ```text
-PS C:\Users\marzu\Documents\cpp-learning> .\clock.exe
 Bedroom 07:00
 Kitchen 07:00
 ```

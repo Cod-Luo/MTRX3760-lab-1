@@ -40,6 +40,21 @@ class CClock
     int mCurrentMinutes;        // current time, in minutes since midnight
 };
 
+//---CAlarmClock---------------------------------------------------------------
+// A CAlarmClock is a CClock with an alarm time. It can set an alarm and report
+// whether the current clock time matches the alarm time.
+class CAlarmClock : public CClock
+{
+  public:
+    CAlarmClock( const std::string& aName, int aStartMinutes );
+
+    void SetAlarm( int aAlarmMinutes );
+    bool IsRinging();
+
+  private:
+    int mAlarmMinutes;
+};
+
 //---main----------------------------------------------------------------------
 // Creates one plain clock, starts it at 06:59, advances it one minute, and
 // reports it.
@@ -49,6 +64,13 @@ int main()
   clock.Tick();
   clock.Report();
 
+  CAlarmClock alarmClock( "Alarm", 419 );
+  alarmClock.SetAlarm( 422 );
+
+  while( !alarmClock.IsRinging() )
+    alarmClock.Tick();
+
+  alarmClock.Report();
   return 0;
 }
 
@@ -59,6 +81,24 @@ CClock::CClock( const std::string& aName, int aStartMinutes )
     mCurrentMinutes( aStartMinutes )
 {
 }
+
+CAlarmClock::CAlarmClock( const std::string& aName, int aStartMinutes )
+  : CClock( aName, aStartMinutes ),
+    mAlarmMinutes( -1 )
+{
+}
+
+void CAlarmClock::SetAlarm( int aAlarmMinutes )
+{
+  mAlarmMinutes = aAlarmMinutes;
+}
+
+bool CAlarmClock::IsRinging()
+{
+  return GetTime() == mAlarmMinutes;
+}
+
+
 //---
 void CClock::Tick()
 {

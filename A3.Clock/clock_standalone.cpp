@@ -40,16 +40,76 @@ class CClock
     int mCurrentMinutes;        // current time, in minutes since midnight
 };
 
+//---CAlarmClock---------------------------------------------------------------
+class CAlarmClock
+{
+  public:
+  CAlarmClock( const std::string& aName, int aStartMinutes );
+  void SetAlarm( int aAlarmMinutes );
+  void Tick();
+  bool IsRinging();
+  void Report();
+
+  private:
+    std::string mName;
+    int mStartMinutes;
+    int mCurrentMinutes;
+    int mAlarmMinutes;
+};
+
 //---main----------------------------------------------------------------------
 // Creates one plain clock, starts it at 06:59, advances it one minute, and
 // reports it.
 int main()
 {
   CClock clock( "Kitchen", 419 );    // 419 minutes = 06:59
+  CAlarmClock alarmClock( "Bedroom", 419 );
+
+  alarmClock.SetAlarm( 420 );
+  while( !alarmClock.IsRinging() )
+    {
+  alarmClock.Tick();
+    }
+    alarmClock.Report();
+  
   clock.Tick();
   clock.Report();
 
   return 0;
+}
+
+//---CAlarmClock Implementation------------------------------------------------
+CAlarmClock::CAlarmClock( const std::string& aName, int aStartMinutes )
+  : mName( aName ),
+    mStartMinutes( aStartMinutes ),
+    mCurrentMinutes( aStartMinutes ),
+    mAlarmMinutes( 0 )
+{
+}
+
+void CAlarmClock::SetAlarm( int aAlarmMinutes )
+{
+  mAlarmMinutes = aAlarmMinutes;
+}
+
+void CAlarmClock::Tick()
+{
+  ++mCurrentMinutes;
+}
+
+bool CAlarmClock::IsRinging()
+{
+  return mCurrentMinutes == mAlarmMinutes;
+}
+
+void CAlarmClock::Report()
+{
+  int hours = ( mCurrentMinutes / 60 ) % 24;
+  int minutes = mCurrentMinutes % 60;
+
+  std::cout << mName << " "
+            << ( hours < 10 ? "0" : "" ) << hours << ":"
+            << ( minutes < 10 ? "0" : "" ) << minutes << std::endl;
 }
 
 //---CClock Implementation-----------------------------------------------------

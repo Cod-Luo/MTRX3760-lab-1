@@ -58,6 +58,21 @@ class CLed : public CDevice
     int mBrightness;
 };
 
+//---CHeater-------------------------------------------------------------------
+class CHeater : public CDevice
+{
+  public:
+    CHeater( const std::string& aName );
+    void SetHeat( int aHeatSetting );
+    int PowerDraw();
+
+  private:
+    int mHeatSetting;
+};
+
+
+
+
 //---main----------------------------------------------------------------------
 // Sets up a motor and an LED, then prints each device's power draw and the
 // running total.
@@ -70,8 +85,13 @@ int main()
   CLed statusLed( "StatusLed" );
   statusLed.SetBrightness( 50 );
 
-  const int NumDevices = 2;
-  CDevice* devices[NumDevices] = { &driveMotor, &statusLed };
+  CHeater heater( "Heater" );
+
+  heater.TurnOn();
+  heater.SetHeat( 20 );
+
+  const int NumDevices = 3;
+  CDevice* devices[NumDevices] = { &driveMotor, &statusLed, &heater };
 
   int total = 0;
   for( int i = 0; i < NumDevices; ++i )
@@ -144,4 +164,22 @@ void CLed::SetBrightness( int aBrightness )
 int CLed::PowerDraw()
 {
   return IsOn() ? mBrightness / 10 : 0;
+}
+
+
+//---CHeater Implementation----------------------------------------------------
+CHeater::CHeater( const std::string& aName )
+  : CDevice( aName ),
+    mHeatSetting( 0 )
+{
+}
+
+void CHeater::SetHeat( int aHeatSetting )
+{
+  mHeatSetting = aHeatSetting;
+}
+
+int CHeater::PowerDraw()
+{
+  return IsOn() ? mHeatSetting * 3 : 0;
 }

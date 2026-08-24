@@ -14,6 +14,10 @@
 //--Consts---------------------------------------------------------------------
 const int NumCycles = 4;              // how many cycles the robot runs for
 const double BaseSpeed = 0.5;         // forward speed before steering is added
+const double LowSpeed = 0.25;         // forward speed once battery is low
+const int LowChargeThreshold = 80;    // charge level below which speed drops
+const int DrainPerCycle = 10;         // charge lost each cycle
+const int FullCharge = 100;           // starting charge
 
 //---CLineSensor---------------------------------------------------------------
 // A CLineSensor reports how far the robot is off the line. It remembers which
@@ -49,18 +53,23 @@ class CController
     double mLastError;      // the reading from the previous cycle
 };
 
-//---CBattery------------------------------------------------------------------
-// A CBattery represents the robot's power source.
+//---CBattery--------------------------------------------------------------
+// A CBattery represents the robot's power source. It starts fully charged
+// and loses charge as the robot runs.
 class CBattery
 {
   public:
+    // Creates a battery at full charge.
     CBattery();
-    void Drain( int aAmount );  // reduces the battery's charge by aAmount
-    int GetCharge();          // returns how much charge is left in the battery
+
+    // Drain reduces the charge by aAmount, not going below zero.
+    void Drain( int aAmount );
+
+    // GetCharge returns the charge currently remaining.
+    int GetCharge();
 
   private:
-    int mCharge;            // how much charge is left in the battery
-    
+    int mCharge;             // charge remaining
 };
 
 //---CMotor--------------------------------------------------------------------
@@ -83,8 +92,9 @@ class CMotor
 };
 
 //---CRobot--------------------------------------------------------------------
-// A CRobot has a line sensor, a controller, and two drive motors. It offers
-// operations described in terms of the whole robot rather than its parts.
+// A CRobot has a line sensor, a controller, two drive motors, and a battery.
+// It offers operations described in terms of the whole robot rather than
+// its parts.
 class CRobot
 {
   public:
@@ -151,6 +161,24 @@ double CController::ComputeSteering( int aError )
   return steering;
 }
 
+//---CBattery Implementation------------------------------------------------
+CBattery::CBattery()
+  : mCharge( FullCharge )
+{
+}
+//---
+void CBattery::Drain( int aAmount )
+{
+  mCharge -= aAmount;
+  if( mCharge < 0 )
+    mCharge = 0;
+}
+//---
+int CBattery::GetCharge()
+{
+  return mCharge;
+}
+
 //---CMotor Implementation-----------------------------------------------------
 CMotor::CMotor( const std::string& aName )
   : mName( aName ),
@@ -174,40 +202,20 @@ CRobot::CRobot()
     mRightMotor( "Right" )
 {
 }
-
-//---CBattery Implementation-----------------------------------------------------
-CBattery::CBattery()
-  : mCharge( 100 )
-{
-}
-//---
-void CBattery::Drain( int aAmount )
-{
-  mCharge -= aAmount;
-  if( mCharge < 0 )
-    mCharge = 0;
-}
-
-//---
-int CBattery::GetCharge()
-{
-  return mCharge;
-}
-
 //---
 void CRobot::Update()
 {
-    mBattery.Drain( 10 );
-    int error = mSensor.Read();
-    double steering = mController.ComputeSteering( error );
-    double speed = BaseSpeed;
+  mBattery.Drain( DrainPerCycle );
 
-    if (mBattery.GetCharge() < 80){
-        speed = 0.25;
-    }
-    
-    mLeftMotor.SetSpeed( speed + steering );
-    mRightMotor.SetSpeed( speed - steering );
+  int error = mSensor.Read();
+  double steering = mController.ComputeSteering( error );
+
+  double speed = BaseSpeed;
+  if( mBattery.GetCharge() < LowChargeThreshold )
+    speed = LowSpeed;
+
+  mLeftMotor.SetSpeed( speed + steering );
+  mRightMotor.SetSpeed( speed - steering );
 }
 //---
 void CRobot::Report()
@@ -216,6 +224,4 @@ void CRobot::Report()
   std::cout << ", ";
   mRightMotor.Report();
   std::cout << std::endl;
-  mBattery.GetCharge();
-  std::cout << "Battery charge: " << mBattery.GetCharge() << std::endl;
 }

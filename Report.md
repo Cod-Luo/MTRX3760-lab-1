@@ -1,4 +1,4 @@
-# MTRX3760 Lab 1 Notes
+# MTRX3760 LAB 1 REPORT
 
 ## A1 - Robot
 

@@ -62,21 +62,22 @@ int main()
 //---COven Implementation------------------------------------------------------
 COven::COven( const std::string& aName )
   : mName( aName ),
-    mTemperatureC( 20 )                 // start at room temperature
+    mTemperatureC( 200 )                 // start at room temperature, 200 = 20C
 {
 }
 //---
 void COven::WarmUp()
 {
-  mTemperatureC += 1;                   // warm up by one degree
+  mTemperatureC += 10;                   // warm up by one degree
 }
 //---
 bool COven::IsOverheating()
 {
-  return mTemperatureC >= 250;          // overheating limit is 250 C
+  return mTemperatureC >= 2500;          // overheating limit is 250 C
 }
 //---
 void COven::Report()
 {
-  std::cout << mName << " is at " << mTemperatureC << "C" << std::endl;
+  // divide by 10 to convert to celcius
+  std::cout << mName << " is at " << mTemperatureC/10 << "C" << std::endl;
 }

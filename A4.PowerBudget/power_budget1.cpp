@@ -27,6 +27,20 @@ class CDevice
     bool mIsOn;
 };
 
+//---CHeater-------------------------------------------------------------------
+// A CHeater is a device whose power draw grows with its heat setting.
+class CHeater : public CDevice
+{
+  public:
+    CHeater( const std::string& aName );
+
+    void SetHeat( int aHeat );                // set the heater's heat level
+    int PowerDraw();                          // power drawn, in watts
+
+  private:
+    int mHeat;
+};
+
 //---CMotor--------------------------------------------------------------------
 // A CMotor is a device whose power draw grows with its speed setting.
 class CMotor : public CDevice
@@ -64,10 +78,18 @@ int main()
   driveMotor.TurnOn();
   driveMotor.SetSpeed( 30 );
 
+  CHeater heater( "Heater" );
+  heater.TurnOn();
+  heater.SetHeat( 40 );
+
   CLed statusLed( "StatusLed" );
   statusLed.SetBrightness( 50 );
 
   int total = 0;
+
+  int heaterDraw = heater.PowerDraw();
+  std::cout << heater.GetName() << ": " << heaterDraw << " W" << std::endl;
+  total += heaterDraw;
 
   int motorDraw = driveMotor.PowerDraw();
   std::cout << driveMotor.GetName() << ": " << motorDraw << " W" << std::endl;
@@ -141,4 +163,24 @@ void CLed::SetBrightness( int aBrightness )
 int CLed::PowerDraw()
 {
   return IsOn() ? mBrightness / 10 : 0;
+}
+
+//---CHeater Implementation----------------------------------------------------
+CHeater::CHeater( const std::string& aName )
+  : CDevice( aName ),
+    mHeat( 0 )
+{
+}
+//---
+void CHeater::SetHeat( int aHeat )
+{
+  mHeat = aHeat;
+}
+//---
+int CHeater::PowerDraw()
+{
+  if( IsOn() )
+    return mHeat * 3;
+
+  return 0;
 }

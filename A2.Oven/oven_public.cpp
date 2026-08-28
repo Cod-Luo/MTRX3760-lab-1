@@ -47,10 +47,10 @@ int main()
     std::cout << "Warning: oven is overheating!" << std::endl;
 
   std::cout << ReflowOven.mName << " is at "
-            << ReflowOven.mTemperatureC / 10.0 << " C" << std::endl;
+            << ReflowOven.mTemperatureC / 10.0 << "C" << std::endl;
 
   std::cout << CuringOven.mName << " is at "
-            << CuringOven.mTemperatureC / 10.0 << " C" << std::endl;
+            << CuringOven.mTemperatureC / 10.0 << "C" << std::endl;
 
   return 0;
 }

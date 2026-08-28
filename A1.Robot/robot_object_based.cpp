@@ -69,7 +69,7 @@ class CBattery
     int GetCharge();
 
   private:
-    int mCharge;             // charge remaining
+    int mCharge;             // charge remaining, 0 to FullCharge
 };
 
 //---CMotor--------------------------------------------------------------------
@@ -205,8 +205,10 @@ CRobot::CRobot()
 //---
 void CRobot::Update()
 {
-  mBattery.Drain( DrainPerCycle );
-
+  // Read the sensor and work out the steering for this cycle, before the
+  // battery drains, so the speed check below uses this cycle's charge
+  // level rather than next cycle's. This keeps the timing identical to
+  // the function-based version, which checks charge before draining it.
   int error = mSensor.Read();
   double steering = mController.ComputeSteering( error );
 
@@ -216,6 +218,10 @@ void CRobot::Update()
 
   mLeftMotor.SetSpeed( speed + steering );
   mRightMotor.SetSpeed( speed - steering );
+
+  // Drain the battery last, so it affects next cycle's speed check, not
+  // this one's.
+  mBattery.Drain( DrainPerCycle );
 }
 //---
 void CRobot::Report()

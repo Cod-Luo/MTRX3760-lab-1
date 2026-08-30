@@ -79,5 +79,5 @@ bool COven::IsOverheating()
 void COven::Report()
 {
   // divide by 10 to convert to celcius
-  std::cout << mName << " is at " << mTemperatureC/10 << "C" << std::endl;
+  std::cout << mName << " is at " << mTemperatureC / 10.0 << "C" << std::endl;
 }

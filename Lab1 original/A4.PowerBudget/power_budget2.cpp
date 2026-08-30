@@ -1,4 +1,4 @@
-// A device power budget v1
+// A device power budget v2
 //
 // This program reports how much power each device on a robot is drawing, and
 // the total. Each device is turned on or off and set up, then its power draw is
@@ -12,6 +12,7 @@
 
 //---CDevice-------------------------------------------------------------------
 // A CDevice is a piece of equipment with a name that can be switched on or off.
+// PowerDraw() reports the device's current power draw, in watts.
 class CDevice
 {
   public:
@@ -22,23 +23,11 @@ class CDevice
     bool IsOn();                              // whether the device is on
     const std::string& GetName();             // the device's label
 
+    virtual int PowerDraw() = 0;              // power drawn, in watts
+
   private:
     std::string mName;
     bool mIsOn;
-};
-
-//---CHeater-------------------------------------------------------------------
-// A CHeater is a device whose power draw grows with its heat setting.
-class CHeater : public CDevice
-{
-  public:
-    CHeater( const std::string& aName );
-
-    void SetHeat( int aHeat );                // set the heater's heat level
-    int PowerDraw();                          // power drawn, in watts
-
-  private:
-    int mHeat;
 };
 
 //---CMotor--------------------------------------------------------------------
@@ -78,27 +67,19 @@ int main()
   driveMotor.TurnOn();
   driveMotor.SetSpeed( 30 );
 
-  CHeater heater( "Heater" );
-  heater.TurnOn();
-  heater.SetHeat( 20 );
-
   CLed statusLed( "StatusLed" );
   statusLed.SetBrightness( 50 );
 
+  const int NumDevices = 2;
+  CDevice* devices[NumDevices] = { &driveMotor, &statusLed };
+
   int total = 0;
-
-  int motorDraw = driveMotor.PowerDraw();
-  std::cout << driveMotor.GetName() << ": " << motorDraw << " W" << std::endl;
-  total += motorDraw;
-
-  int ledDraw = statusLed.PowerDraw();
-  std::cout << statusLed.GetName() << ": " << ledDraw << " W" << std::endl;
-  total += ledDraw;
-
-  int heaterDraw = heater.PowerDraw();
-  std::cout << heater.GetName() << ": " << heaterDraw << " W" << std::endl;
-  total += heaterDraw;
-
+  for( int i = 0; i < NumDevices; ++i )
+  {
+    int draw = devices[i]->PowerDraw();
+    std::cout << devices[i]->GetName() << ": " << draw << " W" << std::endl;
+    total += draw;
+  }
   std::cout << "Total: " << total << " W" << std::endl;
 
   return 0;
@@ -163,24 +144,4 @@ void CLed::SetBrightness( int aBrightness )
 int CLed::PowerDraw()
 {
   return IsOn() ? mBrightness / 10 : 0;
-}
-
-//---CHeater Implementation----------------------------------------------------
-CHeater::CHeater( const std::string& aName )
-  : CDevice( aName ),
-    mHeat( 0 )
-{
-}
-//---
-void CHeater::SetHeat( int aHeat )
-{
-  mHeat = aHeat;
-}
-//---
-int CHeater::PowerDraw()
-{
-  if( IsOn() )
-    return mHeat * 3;
-
-  return 0;
 }

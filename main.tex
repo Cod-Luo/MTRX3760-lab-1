@@ -1,0 +1,541 @@
+\documentclass[10pt,a4paper]{article}
+
+%-------------------------------------------------------------------------------
+% Packages
+%-------------------------------------------------------------------------------
+\usepackage[
+    top=0.7in,
+    bottom=0.7in,
+    left=0.8in,
+    right=0.8in
+]{geometry}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{hyperref}
+
+%-------------------------------------------------------------------------------
+% General Formatting
+%-------------------------------------------------------------------------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\hypersetup{
+    colorlinks=false,
+    hidelinks,
+    pdftitle={MTRX3760 Lab 1 Report}
+}
+
+%-------------------------------------------------------------------------------
+% Colours
+%-------------------------------------------------------------------------------
+\definecolor{lightgray}{RGB}{245,245,245}
+\definecolor{darkgray}{RGB}{70,70,70}
+
+%-------------------------------------------------------------------------------
+% Section Formatting
+%-------------------------------------------------------------------------------
+\titleformat{\section}
+  {\Large\bfseries}
+  {}
+  {0pt}
+  {}
+
+\titleformat{\subsection}
+  {\large\bfseries}
+  {}
+  {0pt}
+  {}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries}
+  {}
+  {0pt}
+  {}
+
+\titlespacing*{\section}{0pt}{20pt}{8pt}
+\titlespacing*{\subsection}{0pt}{14pt}{5pt}
+\titlespacing*{\subsubsection}{0pt}{10pt}{4pt}
+
+%-------------------------------------------------------------------------------
+% Header / Footer
+%-------------------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{MTRX3760}
+\fancyhead[R]{Lab 1}
+\fancyfoot[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%-------------------------------------------------------------------------------
+% Program Output Style
+%-------------------------------------------------------------------------------
+\lstdefinestyle{output}{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{lightgray},
+    frame=single,
+    rulecolor=\color{darkgray},
+    framerule=0.4pt,
+    xleftmargin=8pt,
+    xrightmargin=8pt,
+    framexleftmargin=6pt,
+    framexrightmargin=6pt,
+    aboveskip=8pt,
+    belowskip=10pt,
+    showstringspaces=false,
+    columns=fullflexible
+}
+
+%-------------------------------------------------------------------------------
+% Question Command
+%-------------------------------------------------------------------------------
+\newcommand{\question}[1]{%
+    \vspace{5pt}
+    \textbf{#1}\par
+    \vspace{2pt}
+}
+
+%-------------------------------------------------------------------------------
+% Document
+%-------------------------------------------------------------------------------
+\begin{document}
+
+%-------------------------------------------------------------------------------
+% Title Page
+%-------------------------------------------------------------------------------
+\begin{titlepage}
+    \centering
+
+    \vspace*{2.2cm}
+
+    {\Large University of Sydney\par}
+
+    \vspace{1cm}
+
+    {\LARGE\bfseries MTRX3760\par}
+
+    \vspace{0.3cm}
+
+    {\Huge\bfseries Lab 1 Report\par}
+
+    \vspace{1.5cm}
+
+    \rule{0.75\textwidth}{0.5pt}
+
+    \vspace{1.5cm}
+
+    \begin{tabular}{rl}
+        \textbf{Student SID 1:} & 530487229 \\[0.4cm]
+        \textbf{Student SID 2:} & 540821501 \\[0.4cm]
+        \textbf{Practical Section: } & \texttt{[Monday 3pm]} \\[0.4cm]
+    \end{tabular}
+
+    \vfill
+
+    {\large Introduction to Object-Oriented Design in C++}
+
+    \vspace{1cm}
+
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+%-------------------------------------------------------------------------------
+% A1
+%-------------------------------------------------------------------------------
+\section{A1 -- Robot}
+
+\subsection{Function-Based}
+
+\subsubsection{Program Output}
+
+\begin{lstlisting}[style=output]
+Left motor 0.8, Right motor 0.2
+Left motor 0.55, Right motor 0.45
+Left motor 0.3, Right motor 0.7
+Left motor 0, Right motor 0.5
+\end{lstlisting}
+
+\subsection{Object-Based}
+
+\subsubsection{Program Output}
+
+\begin{lstlisting}[style=output]
+Left motor 0.8, Right motor 0.2
+Left motor 0.55, Right motor 0.45
+Left motor 0.3, Right motor 0.7
+Left motor 0, Right motor 0.5
+\end{lstlisting}
+
+\subsection{Questions}
+
+\question{1. When you added the battery, what changed in \texttt{main()} in each version?}
+
+In the function-based version, \texttt{main()} declares a battery,
+initialise it with \texttt{InitBattery()}, and pass a pointer to it into
+\texttt{UpdateRobot()} on every cycle, alongside the sensor, controller,
+and motors it already passed. In the object-based version, \texttt{main()}
+did not change at all, because the battery was added as a new member
+inside \texttt{CRobot} and is managed entirely within \texttt{CRobot::Update()}.
+
+\question{2. In the function-based version, what does \texttt{main()} have to know about the robot's parts? What does it know in the object-based version?}
+
+In the function-based version, \texttt{main()} has to know about every
+individual part i.e., the sensor, controller, both motors, and now the
+battery, and passes pointers to each of them into the free functions that
+operate on them. In the object-based version, \texttt{main()} only needs
+to know about the single \texttt{CRobot} object and calls its
+\texttt{Update()} and \texttt{Report()} functions; it has no knowledge of
+the sensor, controller, motors, or battery that \texttt{CRobot} contains.
+
+\question{3. What is the name of the object-oriented principle that produced this saving?}
+
+Encapsulation. The robot's internal parts and the logic that coordinates
+them are kept inside \texttt{CRobot}, so adding a new part (the battery)
+only required changing \texttt{CRobot} itself, not any code that uses it.
+
+%-------------------------------------------------------------------------------
+% A2
+%-------------------------------------------------------------------------------
+\newpage
+\section{A2 -- Oven}
+
+\subsection{Private Version}
+
+\subsubsection{Program Output}
+
+\begin{lstlisting}[style=output]
+Reflow oven is at 25C
+Curing oven is at 28C
+\end{lstlisting}
+
+\subsection{Public Version}
+
+\subsubsection{Program Output}
+
+\begin{lstlisting}[style=output]
+Reflow oven is at 25C
+Curing oven is at 28C
+\end{lstlisting}
+
+\subsection{Questions}
+
+\question{1. Which version required more changes? Name the functions or lines you had to edit in each.}
+
+The public-data version required more changes, and they were spread across
+\texttt{main()}: the starting temperatures changed from \texttt{20} to
+\texttt{200}, the warming step changed from \texttt{+= 1} to \texttt{+= 10},
+the overheating limit changed from \texttt{250} to \texttt{2500}, and the
+printed value had to be divided by \texttt{10} at the point it was printed.
+The private version required changes only inside \texttt{COven}: the
+constructor's starting value (\texttt{20} to \texttt{200}), \texttt{WarmUp()}
+(\texttt{+= 1} to \texttt{+= 10}), \texttt{IsOverheating()}'s limit
+(\texttt{250} to \texttt{2500}), and \texttt{Report()} (dividing by \texttt{10}
+before printing). \texttt{main()} itself needed no changes at all.
+
+\question{2. What is the name of the object-oriented principle that kept the change contained in one version?}
+
+Encapsulation. Because the temperature is private in \texttt{COven}, the
+details of how it is stored and scaled can change inside the class without
+any other code needing to know or change.
+
+\question{3. Did \texttt{main()} need to change in the public version? In the private version? Explain the difference.}
+
+Yes, \texttt{main()} had to change in the public version, because it reads
+and writes \texttt{mTemperatureC} directly and therefore has to know the
+new scale. In the private version, \texttt{main()} did not need to change,
+because it only calls \texttt{WarmUp()}, \texttt{IsOverheating()}, and
+\texttt{Report()} functions whose interface stayed the same even though
+their internal implementation changed.
+
+%-------------------------------------------------------------------------------
+% A3
+%-------------------------------------------------------------------------------
+\newpage
+\section{A3 -- Clock}
+
+\subsection{Standalone Version}
+
+\subsubsection{Program Output}
+
+\begin{lstlisting}[style=output]
+Kitchen 07:00
+Alarm 07:02
+\end{lstlisting}
+
+\subsection{Inheritance Version}
+
+\subsubsection{Program Output}
+
+\begin{lstlisting}[style=output]
+Kitchen 07:00
+Alarm 07:02
+\end{lstlisting}
+
+\subsection{Questions}
+
+\question{1. In the standalone version, which parts of the clock's behaviour did you have to repeat?}
+
+The standalone \texttt{CAlarmClock} had to repeat the plain clock's time
+data and behaviour entirely: it stores its own name, start time, and
+current time, and duplicates \texttt{Tick()} to advance the time and
+\texttt{Report()} to format and print it, even though \texttt{CClock}
+already implements both.
+
+\question{2. In the inheritance version, what did you add, and what did you get without writing it?}
+
+\texttt{CAlarmClock} added only what an alarm needs on top of a clock: an
+\texttt{mAlarmMinutes} member, \texttt{SetAlarm()}, and \texttt{IsRinging()}.
+Everything else, like \texttt{Tick()}, \texttt{GetTime()}, \texttt{Report()},
+\texttt{Reset()}, and the constructor's minute-tracking was inherited
+from \texttt{CClock} and did not need to be written or duplicated.
+
+\question{3. What is the name of the object-oriented principle that let the second version reuse the clock's behaviour?}
+
+Inheritance. \texttt{CAlarmClock} reuses \texttt{CClock}'s existing
+behaviour by deriving from it, adding only its own alarm-specific state
+and functions.
+
+%-------------------------------------------------------------------------------
+% A4
+%-------------------------------------------------------------------------------
+\newpage
+\section{A4 -- Power Budget}
+
+\subsection{Power Budget Version 1}
+
+\subsubsection{Program Output}
+
+\begin{lstlisting}[style=output]
+DriveMotor: 60 W
+StatusLed: 0 W
+Heater: 60 W
+Total: 120 W
+\end{lstlisting}
+
+\subsection{Power Budget Version 2}
+
+\subsubsection{Program Output}
+
+\begin{lstlisting}[style=output]
+DriveMotor: 60 W
+StatusLed: 0 W
+Heater: 60 W
+Total: 120 W
+\end{lstlisting}
+
+\subsection{Questions}
+
+\question{1. What did you have to change in each version to add the heater? Answer for both versions separately.}
+
+In \texttt{power\_budget1.cpp}, a \texttt{CHeater} class was added as a
+subclass of \texttt{CDevice}, without modifying \texttt{CDevice}, with a
+heat setting, \texttt{SetHeat()}, and its own \texttt{PowerDraw()}. In
+\texttt{main()}, a heater object was created, turned on, and given a heat
+setting, then a new three-line block was written by hand to get its
+\texttt{PowerDraw()}, print it, and add it to the running total,
+copying the pattern already used for the motor and the LED.
+
+In \texttt{power\_budget2.cpp}, the same \texttt{CHeater} class was added,
+also without modifying \texttt{CDevice}. The only change needed in
+\texttt{main()} was constructing the heater and adding a pointer to it in
+the \texttt{devices} array. No new reporting or totalling code was needed,
+because the existing loop already handles every \texttt{CDevice*} in the
+array polymorphically.
+
+\question{2. Which version was easier to extend, and what specifically made it easier?}
+
+\texttt{power\_budget2.cpp} was easier to extend. Because every device is
+stored and processed as a \texttt{CDevice*} through one loop, adding the
+heater only meant creating it and adding it to the array, the loop
+picked it up automatically. \texttt{power\_budget1.cpp} required writing
+an entire new block in \texttt{main()} to get, print, and total the
+heater's draw, duplicating the pattern already present for the other two
+devices.
+
+\question{3. What is the name of the object-oriented principle behind that difference?}
+
+Polymorphism. Because \texttt{CMotor}, \texttt{CLed}, and \texttt{CHeater}
+all implement the same \texttt{PowerDraw()} interface declared in
+\texttt{CDevice}, the loop in \texttt{main()} can call it on any of them
+through a \texttt{CDevice*} without knowing which concrete class it is
+pointing to.
+
+
+
+
+
+%-------------------------------------------------------------------------------
+% A5
+%-------------------------------------------------------------------------------
+\newpage
+\section{A5 -- Robot Controller}
+
+\subsection{Program Output}
+
+\begin{lstlisting}[style=output]
+Cycle 1
+Drive motor: current 0.2, target 0.8
+Front line offset: 2
+
+Cycle 2
+Drive motor: current 0.4, target 0.8
+Front line offset: 1
+
+Cycle 3
+Drive motor: current 0.6, target 0.8
+Front line offset: -1
+
+Cycle 4
+Drive motor: current 0.8, target 0.8
+Front line offset: -2
+\end{lstlisting}
+
+\subsection{Questions}
+\question{1. What did Partner B's controller need to know about the subsystems? What did Partner A's subsystems need to know about the controller?}
+
+Partner B's controller only needed each subsystem to provide the common
+\texttt{CSubsystem} interface: \texttt{Update()} and \texttt{Report()}.
+Partner A's subsystems did not need to know about \texttt{CRobotController},
+they only inherited from \texttt{CSubsystem} and implemented that interface.
+
+\question{2. What did you have to change, adapt, or correct to make the two halves work together?}
+
+We made both subsystem classes inherit from \texttt{CSubsystem} and ensured
+their \texttt{Update()} and \texttt{Report() const} function signatures
+matched the base-class interface. In \texttt{main.cpp}, we created the
+subsystems, configured the motor target speed, and added pointers to both
+subsystems to the controller.
+
+\question{3. Did you design the testing before or after the subsystems and integrated system? In future, which option do you think would be the most time-efficient?}
+
+We designed the integration test after implementing the subsystems and
+controller, using \texttt{main.cpp} to run four cycles and print their state.
+In future, defining expected test output before implementation would be more
+time-efficient because it would make integration errors easier to identify.
+
+\question{4. In which places does your design, including test code, use the following concepts? Be specific, point to specific parts of the program:}
+
+\textbf{a. Modularity:} Each class is in its own header and implementation
+file, including \texttt{CDriveMotor}, \texttt{CLineDetector},
+\texttt{CSubsystem}, and \texttt{CRobotController}.
+
+\textbf{b. Encapsulation:} The motor's speeds, detector's line offset, and
+controller's subsystem array are private member data, accessed only through
+their public member functions.
+
+\textbf{c. Inheritance:} \texttt{CDriveMotor} and \texttt{CLineDetector}
+both publicly inherit from the abstract \texttt{CSubsystem} base class.
+
+\textbf{d. Polymorphism:} \texttt{CRobotController} stores
+\texttt{CSubsystem*} pointers and calls the virtual \texttt{Update()} and
+\texttt{Report()} functions in its loops, so it can operate on either type
+without knowing its concrete class.
+
+%-------------------------------------------------------------------------------
+% Self-Assessment
+%-------------------------------------------------------------------------------
+\newpage
+\section{Self-Assessment}
+
+\texttt{Without bonus}
+
+\begin{center}
+\begin{tabular}{ll}
+A1 & \_\_\_ / 5 \\
+A2 & \_\_\_ / 5 \\
+A3 & \_\_\_ / 5 \\
+A4 & \_\_\_ / 5 \\
+A5 & \_\_\_ / 30 \\
+Design & \_\_\_ / 25 \\
+Code & \_\_\_ / 25 \\
+\textbf{Total} & \textbf{\_\_\_ / 100} \\
+\end{tabular}
+\end{center}
+
+%-------------------------------------------------------------------------------
+% Code Appendix
+%-------------------------------------------------------------------------------
+\clearpage
+\section{Code Appendix}
+
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A1: Function-Based Robot}]
+{A1.Robot/robot_function_based.cpp}
+
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A1: Object-Based Robot}]
+{A1.Robot/robot_object_based.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A2: Public Oven}]
+{A2.Oven/oven_public.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A2: Private Oven}]
+{A2.Oven/oven_private.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A3: Standalone Clock}]
+{A3.Clock/clock_standalone.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A3: Inheritance Clock}]
+{A3.Clock/clock_inherit.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A4: Power Budget Version 1}]
+{A4.PowerBudget/power_budget1.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A4: Power Budget Version 2}]
+{A4.PowerBudget/power_budget2.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: CSubsystem Header}]
+{A5.RobotController/CSubsystem.h}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: CSubsystem Implementation}]
+{A5.RobotController/CSubsystem.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: CDriveMotor Header}]
+{A5.RobotController/CDriveMotor.h}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: CDriveMotor Implementation}]
+{A5.RobotController/CDriveMotor.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: CLineDetector Header}]
+{A5.RobotController/CLineDetector.h}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: CLineDetector Implementation}]
+{A5.RobotController/CLineDetector.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: CRobotController Header}]
+{A5.RobotController/CRobotController.h}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: CRobotController Implementation}]
+{A5.RobotController/CRobotController.cpp}
+\newpage
+\lstinputlisting[style=output,language=C++,breaklines=true,
+caption={A5: Integration Program}]
+{A5.RobotController/main.cpp}
+
+\end{document}
